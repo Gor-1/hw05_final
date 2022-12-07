@@ -80,7 +80,7 @@ def post_detail(request, post_id):
     # Здесь код запроса к модели и создание словаря контекста
     post = get_object_or_404(Post, id=post_id)
     form_comment = CommentForm()
-    comments = Comment.objects.filter(post_id=post_id)
+    comments = Comment.objects.filter(post__comments__author=post_id)
     context = {
         'post': post,
         'count_posts': post.author.posts.count(),
@@ -173,11 +173,11 @@ def follow_index(request):
 def profile_follow(request, username):
     # подписаться на автора
     author = get_object_or_404(User, username=username)
-    # проверяем подписан ли пользователь
-    if Follow.objects.filter(author=author, user=request.user).exists():
-        return redirect('posts:profile', username=username)
     # это на всяки случаи если захочет подписаться на себя каким то образом
-    if request.user.username == username:
+    # и проверяем подписан ли пользователь
+    if Follow.objects.filter(author=author, user=request.user).exists() or (
+        request.user.username == username
+    ):
         return redirect('posts:profile', username=username)
     follow_record = Follow(user=request.user, author=author)
     follow_record.save()
