@@ -186,8 +186,8 @@ def profile_follow(request, username):
 def profile_unfollow(requst, username):
     # отписаться от автора
     author = get_object_or_404(User, username=username)
+    unfollow_db = Follow.objects.filter(author=author, user=requst.user)
     # проверяем подписан ли пользователь
-    if Follow.objects.filter(author=author, user=requst.user).exists():
-        Follow.objects.filter(author=author, user=requst.user).delete()
-        return redirect('posts:profile', username=username)
+    if unfollow_db.exists():
+        unfollow_db.delete()
     return redirect('posts:profile', username=username)
