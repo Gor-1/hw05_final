@@ -64,9 +64,7 @@ def profile(request, username):
         if Follow.objects.filter(author=author, user=request.user).exists():
             following = True
 
-    paginator = Paginator(posts_author, PUB_VALUE)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    page_obj = page_list(request, posts_author)
     context = {
         'author': author,
         'page_obj': page_obj,
